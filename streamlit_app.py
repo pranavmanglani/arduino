@@ -53,8 +53,8 @@ with col_main:
     st.subheader("📥 Live Sketch Stream")
     
     try:
-        # FIXED LINE FOR RECENT SUPABASE LIBRARIES:
-        query = db.table("snippets").select("*").order("created_at", options={"descending": True}).execute()
+        # FIXED EXPLICIT PARAMETER FOR POSTGREST SYNTAX
+        query = db.table("snippets").select("*").order("created_at", desc=True).execute()
         records = query.data
 
         if not records:
