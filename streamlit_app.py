@@ -1,15 +1,12 @@
 import streamlit as st
 from supabase import create_client
 
-# --- FORCE DISABLE ACCENT METRICS ---
-# Hardcoded endpoints with validation fallbacks
+# --- SUPABASE CONFIG ---
 URL = "https://snuhhlktfympkhfvtuks.supabase.co"
 KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InNudWhobGt0ZnltcGtoZnZ0dWtzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg5Mzc4NzAsImV4cCI6MjA5NDUxMzg3MH0.2S0cIX_gg2C_zBnGAmTD9xWa23VH10kf2zjtlgnkV5c"
 
-# Set setup config immediately at top
 st.set_page_config(page_title="Arduino Hub", page_icon="🤖", layout="wide")
 
-# Connect directly without cache wrappers to isolate metrics anomalies
 try:
     db = create_client(URL, KEY)
 except Exception as init_err:
@@ -21,7 +18,6 @@ st.title("🤖 Arduino Code Central Registry")
 st.caption("A global repository to share, discover, and copy community-driven Arduino sketches.")
 st.markdown("---")
 
-# --- APP LAYOUT COLUMNS ---
 col_side, col_main = st.columns([1, 2], gap="large")
 
 # --- LEFT SIDE: PUBLISHING FORM ---
@@ -57,8 +53,8 @@ with col_main:
     st.subheader("📥 Live Sketch Stream")
     
     try:
-        # Run live database read request
-        query = db.table("snippets").select("*").order("created_at", descending=True).execute()
+        # FIXED LINE FOR RECENT SUPABASE LIBRARIES:
+        query = db.table("snippets").select("*").order("created_at", options={"descending": True}).execute()
         records = query.data
 
         if not records:
@@ -79,20 +75,4 @@ with col_main:
 
     except Exception as db_read_err:
         st.error("❌ Database Read Failure!")
-        st.info("This usually means your Supabase database table does not exist yet or has different column names.")
-        st.markdown("**Exact error details:**")
         st.code(str(db_read_err), language="text")
-        
-        st.markdown("""
-        ### How to fix your database table layout:
-        Go to your **Supabase Dashboard -> SQL Editor**, paste this exact query into a new sheet, and click **Run**:
-        ```sql
-        create table if not exists snippets (
-          id bigint generated always as identity primary key,
-          title text not null,
-          author text not null,
-          code text not null,
-          created_at timestamp with time zone default timezone('utc'::text, now()) not null
-        );
-        ```
-        """)
