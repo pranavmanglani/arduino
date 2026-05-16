@@ -24,13 +24,8 @@ except Exception as e:
     st.error(f"Failed to initialize Supabase connection: {e}")
     st.stop()
 
-# --- STYLING HEADER ---
-st.markdown("""
-    <style>
-    .main-title { font-size:2.4rem; font-weight:700; color: #00979D; margin-bottom: 0.2rem; }
-    .sub-title { font-size:1.1rem; color: #666; margin-bottom: 2rem; }
-    </style>
-    """, unsafe_html=True)
+# --- STYLING HEADER (Python 3.14 Inline Fix) ---
+st.markdown("<style>.main-title { font-size:2.4rem; font-weight:700; color: #00979D; margin-bottom: 0.2rem; } .sub-title { font-size:1.1rem; color: #666; margin-bottom: 2rem; }</style>", unsafe_html=True)
 
 st.markdown('<div class="main-title">🤖 Arduino Code Central Registry</div>', unsafe_html=True)
 st.markdown('<div class="sub-title">A global repository to share, discover, and copy community-driven Arduino sketches.</div>', unsafe_html=True)
@@ -46,7 +41,7 @@ with st.sidebar:
     title_input = st.text_input("Sketch Title", placeholder="e.g., I2C LCD Display Driver", help="Keep it brief and descriptive")
     
     # Custom boilerplate preloaded inside code text area
-    boilerplate = """// Title: Your Project Title\nvoid setup() {\n  // put your setup code here, to run once:\n\n}\n\nvoid loop() {\n  // put your main code here, to run repeatedly:\n\n}"""
+    boilerplate = "// Title: Your Project Title\nvoid setup() {\n  // put your setup code here, to run once:\n\n}\n\nvoid loop() {\n  // put your main code here, to run repeatedly:\n\n}"
     code_input = st.text_area("Arduino Source Code (C++)", value=boilerplate, height=320)
     
     st.markdown("---")
